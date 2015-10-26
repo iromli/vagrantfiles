@@ -1,0 +1,24 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure(2) do |config|
+  config.vm.box = "phusion/ubuntu-14.04-amd64"
+
+  config.vm.define "master", primary: true do |master|
+    master.vm.hostname = "gluu-master"
+    master.vm.synced_folder "./volumes/master", "/vagrant"
+  end
+
+  config.vm.define "consumer", autostart: false do |consumer|
+    consumer.vm.hostname = "gluu-consumer"
+    consumer.vm.synced_folder "./volumes/consumer", "/vagrant"
+  end
+
+  config.vm.network "public_network", type: "dhcp"
+
+  config.vm.provision "shell", inline: <<-SHELL
+    wget -q http://repo.gluu.org/ubuntu/gluu-release-devel_1.0-1_all.deb -O /vagrant/gluu-release-devel_1.0-1_all.deb
+    dpkg -i /vagrant/gluu-release-devel_1.0-1_all.deb
+    apt-get update -q
+    wget -q https://github.com/GluuFederation/gluu-cluster-postinstall/raw/master/postinstall.py -O /vagrant/postinstall.py
+  SHELL
+end

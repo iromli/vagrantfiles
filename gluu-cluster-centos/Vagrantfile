@@ -1,0 +1,31 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure(2) do |config|
+  config.vm.box = "puppetlabs/centos-7.0-64-nocm"
+
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+    v.cpus = 2
+  end
+
+  config.vm.define "master", primary: true do |master|
+    master.vm.hostname = "gluu-master"
+    master.vm.synced_folder "./volumes/master", "/vagrant"
+  end
+
+  config.vm.define "consumer", autostart: false do |consumer|
+    consumer.vm.hostname = "gluu-consumer"
+    consumer.vm.synced_folder "./volumes/consumer", "/vagrant"
+  end
+
+  config.vm.network "public_network", type: "dhcp"
+
+  config.vm.provision "shell", inline: <<-SHELL
+    rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    wget http://repo.gluu.org/centos/Gluu-7.repo -O /etc/yum.repos.d/Gluu-7.repo
+    wget http://repo.gluu.org/centos/RPM-GPG-KEY-GLUU -O /etc/pki/rpm-gpg/RPM-GPG-KEY-GLUU
+    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-GLUU
+    yum clean all
+    wget https://raw.githubusercontent.com/GluuFederation/gluu-cluster-postinstall/master/postinstall.py -O /vagrant/postinstall.py
+  SHELL
+end
