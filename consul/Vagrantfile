@@ -1,0 +1,29 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "phusion/ubuntu-14.04-amd64"
+
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get install -y unzip
+
+    cd /tmp
+    wget -q https://dl.bintray.com/mitchellh/consul/0.5.2_linux_amd64.zip -O consul.zip
+    unzip consul.zip
+    chmod +x consul
+    mv consul /usr/bin/consul
+
+    mkdir /etc/consul.d
+    chmod a+w /etc/consul.d
+  SHELL
+
+  config.vm.define "consul1", primary: true do |c1|
+    c1.vm.hostname = "consul1"
+    c1.vm.network "private_network", ip: "172.20.20.10"
+  end
+
+  config.vm.define "consul2", autostart: false do |c2|
+    c2.vm.hostname = "consul2"
+    c2.vm.network "private_network", ip: "172.20.20.11"
+  end
+end

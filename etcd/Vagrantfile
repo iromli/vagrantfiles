@@ -1,0 +1,25 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "phusion/ubuntu-14.04-amd64"
+
+  config.vm.provision "shell", inline: <<-SHELL
+    cd  /tmp
+    curl -sL https://github.com/coreos/etcd/releases/download/v2.2.0/etcd-v2.2.0-linux-amd64.tar.gz -o etcd.tar.gz
+    tar xzvf etcd.tar.gz
+    cd etcd-v2.2.0-linux-amd64
+    mv etcd /usr/bin/etcd
+    mv etcdctl /usr/bin/etcdctl
+  SHELL
+
+  config.vm.define "etcd1", primary: true do |e1|
+    e1.vm.hostname = "etcd1"
+    e1.vm.network "private_network", ip: "172.20.20.10"
+  end
+
+  config.vm.define "etcd2", autostart: false do |e2|
+    e2.vm.hostname = "etcd2"
+    e2.vm.network "private_network", ip: "172.20.20.11"
+  end
+end
