@@ -1,1 +1,1 @@
-apt-get install -y --force-yes gluu-consumer
+apt-get install -y --force-yes gluu-consumer gluu-agent
