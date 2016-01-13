@@ -12,18 +12,25 @@ Vagrant.configure(2) do |config|
     master.vm.hostname = "gluu-master"
     master.vm.synced_folder "./volumes/master", "/vagrant"
     master.vm.network "private_network", ip: "172.20.20.10"
+    master.vm.provision "shell", inline: <<-SHELL
+      wget -q http://repo.gluu.org/ubuntu/gluu-release-devel_1.0-1_all.deb -O /vagrant/gluu-release-devel_1.0-1_all.deb \
+        && dpkg -i /vagrant/gluu-release-devel_1.0-1_all.deb
+      apt-get update -q
+      wget -q https://github.com/GluuFederation/gluu-cluster-postinstall/raw/master/postinstall.py -O /vagrant/postinstall.py
+      wget https://github.com/docker/machine/releases/download/v0.5.6/docker-machine_linux-amd64 -O /usr/bin/docker-machine \
+        && chmod +x /usr/bin/docker-machine
+    SHELL
   end
 
   config.vm.define "consumer", autostart: false do |consumer|
     consumer.vm.hostname = "gluu-consumer"
     consumer.vm.synced_folder "./volumes/consumer", "/vagrant"
     consumer.vm.network "private_network", ip: "172.20.20.11"
+    consumer.vm.provision "shell", inline: <<-SHELL
+      wget -q http://repo.gluu.org/ubuntu/gluu-release-devel_1.0-1_all.deb -O /vagrant/gluu-release-devel_1.0-1_all.deb \
+        && dpkg -i /vagrant/gluu-release-devel_1.0-1_all.deb
+      apt-get update -q
+      wget -q https://github.com/GluuFederation/gluu-cluster-postinstall/raw/master/postinstall.py -O /vagrant/postinstall.py
+    SHELL
   end
-
-  config.vm.provision "shell", inline: <<-SHELL
-    wget -q http://repo.gluu.org/ubuntu/gluu-release-devel_1.0-1_all.deb -O /vagrant/gluu-release-devel_1.0-1_all.deb
-    dpkg -i /vagrant/gluu-release-devel_1.0-1_all.deb
-    apt-get update -q
-    wget -q https://github.com/GluuFederation/gluu-cluster-postinstall/raw/master/postinstall.py -O /vagrant/postinstall.py
-  SHELL
 end
