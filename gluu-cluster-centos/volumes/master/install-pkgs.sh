@@ -1,6 +1,11 @@
 #!/usr/bin/env sh
-yum install -y gluu-master gluu-flask #gluu-agent
+yum install -y gluu-master
 systemctl start docker.service && systemctl enable docker.service
 systemctl start salt-master.service && systemctl enable salt-master.service
 systemctl start salt-minion.service && systemctl enable salt-minion.service
+
+yum install -y gluu-flask
 systemctl start gluu-flask.service && systemctl enable gluu-flask.service
+
+yum install -y gluu-agent
+systemctl start gluu-agent.service && systemctl enable gluu-agent.service
