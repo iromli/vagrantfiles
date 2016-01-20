@@ -10,31 +10,23 @@ Vagrant.configure(2) do |config|
 
   config.vm.define "master", primary: true do |master|
     master.vm.hostname = "gluu-master"
-    master.vm.synced_folder "./volumes/master", "/vagrant"
+    master.vm.synced_folder "./volumes/master", "/home/vagrant"
     master.vm.network "private_network", ip: "172.20.20.10"
-    master.vm.provision "shell", inline: <<-SHELL
-      rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
-        && wget -q http://repo.gluu.org/centos/Gluu-7.repo -O /etc/yum.repos.d/Gluu-7.repo \
-        && wget -q http://repo.gluu.org/centos/RPM-GPG-KEY-GLUU -O /etc/pki/rpm-gpg/RPM-GPG-KEY-GLUU \
-        && rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-GLUU
-      yum -y update
-      yum clean all
-      wget -q https://raw.githubusercontent.com/GluuFederation/gluu-cluster-postinstall/master/postinstall.py -O /vagrant/postinstall.py
-    SHELL
   end
 
   config.vm.define "consumer", autostart: false do |consumer|
     consumer.vm.hostname = "gluu-consumer"
-    consumer.vm.synced_folder "./volumes/consumer", "/vagrant"
+    consumer.vm.synced_folder "./volumes/consumer", "/home/vagrant"
     consumer.vm.network "private_network", ip: "172.20.20.11"
-    consumer.vm.provision "shell", inline: <<-SHELL
-      rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
-        && wget -q http://repo.gluu.org/centos/Gluu-7.repo -O /etc/yum.repos.d/Gluu-7.repo \
-        && wget -q http://repo.gluu.org/centos/RPM-GPG-KEY-GLUU -O /etc/pki/rpm-gpg/RPM-GPG-KEY-GLUU \
-        && rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-GLUU
-      yum -y update
-      yum clean all
-      wget -q https://raw.githubusercontent.com/GluuFederation/gluu-cluster-postinstall/master/postinstall.py -O /vagrant/postinstall.py
-    SHELL
   end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
+      && wget -q http://repo.gluu.org/centos/Gluu-7.repo -O /etc/yum.repos.d/Gluu-7.repo \
+      && wget -q http://repo.gluu.org/centos/RPM-GPG-KEY-GLUU -O /etc/pki/rpm-gpg/RPM-GPG-KEY-GLUU \
+      && rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-GLUU
+    yum -y update
+    yum clean all
+    wget -q https://raw.githubusercontent.com/GluuFederation/gluu-cluster-postinstall/master/postinstall.py -O /vagrant/postinstall.py
+  SHELL
 end
