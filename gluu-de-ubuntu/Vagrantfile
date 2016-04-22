@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure(2) do |config|
+  config.vm.box = "phusion/ubuntu-14.04-amd64"
+
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2048
+    v.cpus = 2
+  end
+
+  config.vm.define "discovery", primary: true do |discovery|
+    discovery.vm.hostname = "gluu-discovery"
+    discovery.vm.synced_folder "./volumes/discovery", "/vagrant"
+    discovery.vm.network "private_network", ip: "172.10.10.10"
+  end
+
+  config.vm.define "master", autostart: false do |master|
+    master.vm.hostname = "gluu-master"
+    master.vm.synced_folder "./volumes/master", "/vagrant"
+    master.vm.network "private_network", ip: "172.10.10.11"
+  end
+
+  config.vm.define "worker", autostart: false do |worker|
+    worker.vm.hostname = "gluu-worker"
+    worker.vm.synced_folder "./volumes/worker", "/vagrant"
+    worker.vm.network "private_network", ip: "172.10.10.12"
+  end
+end
