@@ -9,7 +9,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.define "discovery", primary: true do |discovery|
-    discovery.vm.hostname = "gluu-discovery"
+    discovery.vm.hostname = "gluu.discovery"
     discovery.vm.synced_folder "./volumes/discovery", "/vagrant"
     discovery.vm.network "private_network", ip: "172.10.10.10"
   end
