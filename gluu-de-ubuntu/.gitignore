@@ -5,3 +5,6 @@ __pycache__/
 *.vagrant
 *.out
 *.pem
+*.py[co]
+*.env
+*.py
