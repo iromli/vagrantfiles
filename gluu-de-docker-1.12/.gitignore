@@ -1,0 +1,4 @@
+*.py[co]
+.vagrant
+token.txt
+ca.crt
