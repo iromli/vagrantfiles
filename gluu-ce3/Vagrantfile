@@ -4,8 +4,9 @@ Vagrant.configure(2) do |config|
   config.vm.box = "phusion/ubuntu-14.04-amd64"
 
   config.vm.define "ce3", primary: true do |ce|
-    ce.vm.hostname = "ce3"
+    ce.vm.hostname = "ce3.gluu.dev"
     ce.vm.network "private_network", ip: "172.50.10.10"
+    ce.vm.synced_folder "./volumes", "/vagrant"
     ce.vm.provider "virtualbox" do |v|
       v.memory = 4096
       v.cpus = 2
@@ -13,9 +14,6 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision "shell", inline: <<-SHELL
-    echo "deb https://repo.gluu.org/ubuntu/ trusty-devel main" > /etc/apt/sources.list.d/gluu-devel-repo.list
-    curl https://repo.gluu.org/ubuntu/gluu-apt.key | apt-key add -
     apt-get update
-    apt-get install -y --force-yes gluu-server-3.0.0
   SHELL
 end
